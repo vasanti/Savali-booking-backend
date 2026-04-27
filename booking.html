@@ -201,33 +201,43 @@ async function startPayment() {
     const order = await orderRes.json();
 
     const options = {
-      key: "rzp_test_SiUC86cmFStEyo",
-      amount: order.amount,
-      currency: order.currency,
-      order_id: order.id,
-      name: "Saavali Stay",
+  key: "rzp_test_SiUC86cmFStEyo",
+  amount: order.amount,
+  currency: "INR",
+  order_id: order.id,
+  name: "Saavali Stay",
 
-      handler: async function (response) {
+  method: {
+    upi: false,   // ❌ disable UPI (test issue)
+    wallet: false,
+    netbanking: false,
+    emi: false
+  },
 
-        const verifyRes = await fetch("https://savali-booking-backend.onrender.com/api/verify-payment", {
-          method: "POST",
-          headers: {"Content-Type": "application/json"},
-          body: JSON.stringify({
-            ...response,
-            bookingData
-          })
-        });
+  theme: {
+    color: "#3399cc"
+  },
 
-        const result = await verifyRes.json();
+  handler: async function (response) {
+    const verifyRes = await fetch("https://savali-booking-backend.onrender.com/api/verify-payment", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        ...response,
+        bookingData
+      })
+    });
 
-        if (result.success) {
-          alert("🎉 Booking Confirmed!");
-          location.reload();
-        } else {
-          alert("Payment failed");
-        }
-      }
-    };
+    const result = await verifyRes.json();
+
+    if (result.success) {
+      alert("🎉 Booking Confirmed!");
+      location.reload();
+    } else {
+      alert("Payment failed");
+    }
+  }
+};
 
     new Razorpay(options).open();
 
