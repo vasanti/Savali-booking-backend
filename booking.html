@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Booking - Saavali</title>
+
+<link rel="stylesheet" href="style.css">
+
+<!-- Flatpickr -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+
+<!-- Razorpay -->
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+
+</head>
+
+<body>
+
+<header class="header">
+  <div class="nav-container">
+
+    <div class="logo">
+      <img src="images/logo.png">
+      <div class="logo-text">
+        <span class="brand">Savali</span>
+        <small>The shades of shadow</small>
+      </div>
+    </div>
+
+    <nav class="nav-links">
+      <a href="index.html">About</a>
+      <a href="gallery.html">Gallery</a>
+      <a href="stay.html">Stay</a>
+      <a href="booking.html">Booking</a>
+    </nav>
+
+  </div>
+</header>
+
+<div class="container">
+
+<h1>🌿 Book Your Stay at Saavali</h1>
+<p class="subtitle">Your peaceful holiday retreat in the heart of nature</p>
+
+<div class="form-box">
+
+<form>
+
+<label>Full Name</label>
+<input type="text" name="name" required>
+
+<label>Phone</label>
+<input type="tel" name="phone" required>
+
+<label>Email</label>
+<input type="email" name="email" required>
+
+<label>Check-in</label>
+<input type="text" id="checkin" placeholder="Select Check-in" readonly required>
+
+<label>Check-out</label>
+<input type="text" id="checkout" placeholder="Select Check-out" readonly required>
+
+<p id="date-msg"></p>
+
+<label>Guests (Max 6)</label>
+<input type="number" name="guests" min="1" max="6" required>
+
+<button type="button" onclick="startPayment()">💳 Pay & Book</button>
+
+</form>
+
+</div>
+</div>
+
+<a href="https://wa.me/919890021266" class="whatsapp">💬</a>
+
+<footer class="footer">
+  <p>📞 9890021266</p>
+</footer>
+
+<script>
+
+// ==============================
+// 📅 GLOBAL
+// ==============================
+let bookedDates = [];
+
+const checkin = document.getElementById("checkin");
+const checkout = document.getElementById("checkout");
+const msg = document.getElementById("date-msg");
+const guestInput = document.querySelector('input[name="guests"]');
+
+// ==============================
+// 📅 INIT CALENDAR FIRST (FIX)
+// ==============================
+const checkinPicker = flatpickr("#checkin", {
+  minDate: "today",
+  disable: bookedDates,
+  dateFormat: "Y-m-d",
+  allowInput: false,
+  clickOpens: true,
+  onChange: validateDates
+});
+
+const checkoutPicker = flatpickr("#checkout", {
+  minDate: "today",
+  disable: bookedDates,
+  dateFormat: "Y-m-d",
+  allowInput: false,
+  clickOpens: true,
+  onChange: validateDates
+});
+
+// ==============================
+// 📅 FETCH GOOGLE CALENDAR
+// ==============================
+fetch("https://script.google.com/macros/s/AKfycbxViis_EDwwFsXUm21CqV2FaUBNZCwGrFHj7qqKzBMZCUFv28D906SjxmwSiP4yptWd2Q/exec")
+  .then(res => res.json())
+  .then(data => {
+
+    console.log("Booked Dates:", data);
+
+    bookedDates = data;
+
+    checkinPicker.set("disable", bookedDates);
+    checkoutPicker.set("disable", bookedDates);
+
+  })
+  .catch(err => {
+    console.error("Calendar fetch failed:", err);
+  });
+
+// ==============================
+// 🔓 AUTO OPEN
+// ==============================
+checkin.addEventListener("focus", () => checkinPicker.open());
+checkout.addEventListener("focus", () => checkoutPicker.open());
+
+// ==============================
+// 🔍 VALIDATION
+// ==============================
+function validateDates() {
+
+  if (!checkin.value || !checkout.value) return false;
+
+  if (checkout.value < checkin.value) {
+    msg.style.color = "red";
+    msg.innerText = "⚠ Check-out must be after check-in";
+    return false;
+  }
+
+  let current = new Date(checkin.value);
+  let end = new Date(checkout.value);
+
+  while (current <= end) {
+    let dateStr = current.toISOString().split("T")[0];
+
+    if (bookedDates.includes(dateStr)) {
+      msg.style.color = "red";
+      msg.innerText = "❌ This date is already booked";
+      return false;
+    }
+
+    current.setDate(current.getDate() + 1);
+  }
+
+  msg.style.color = "green";
+  msg.innerText = "✅ Dates available";
+  return true;
+}
+
+// ==============================
+// 💳 PAYMENT
+// ==============================
+async function startPayment() {
+
+  if (!validateDates()) {
+    alert("Please select valid dates");
+    return;
+  }
+
+  const bookingData = {
+    name: document.querySelector('[name="name"]').value,
+    phone: document.querySelector('[name="phone"]').value,
+    email: document.querySelector('[name="email"]').value,
+    checkin: checkin.value,
+    checkout: checkout.value
+  };
+
+  try {
+
+    const orderRes = await fetch("https://savali-booking-backend.onrender.com/api/create-order", {
+      method: "POST",
+      headers: {"Content-Type": "application/json"},
+      body: JSON.stringify({ amount: 100 })
+    });
+
+    const order = await orderRes.json();
+
+    const options = {
+      key: "rzp_test_SiUC86cmFStEyo",
+      amount: order.amount,
+      currency: order.currency,
+      order_id: order.id,
+      name: "Saavali Stay",
+
+      handler: async function (response) {
+
+        const verifyRes = await fetch("https://savali-booking-backend.onrender.com/api/verify-payment", {
+          method: "POST",
+          headers: {"Content-Type": "application/json"},
+          body: JSON.stringify({
+            ...response,
+            bookingData
+          })
+        });
+
+        const result = await verifyRes.json();
+
+        if (result.success) {
+          alert("🎉 Booking Confirmed!");
+          location.reload();
+        } else {
+          alert("Payment failed");
+        }
+      }
+    };
+
+    new Razorpay(options).open();
+
+  } catch (err) {
+    alert("Payment error");
+  }
+}
+
+// ==============================
+// 👥 GUEST LIMIT
+// ==============================
+guestInput.addEventListener("input", function() {
+  if (this.value > 6) {
+    alert("⚠ Max 6 guests allowed.");
+    window.open("https://wa.me/919890021266", "_blank");
+    this.value = 6;
+  }
+});
+
+</script>
+
+</body>
+</html>
