@@ -1,0 +1,140 @@
+/* ===== SCOPED GALLERY ===== */
+
+.gallery-page .swiper {
+  width: 90%;
+  max-width: 700px;
+  margin: 20px auto;
+}
+
+.gallery-page .swiper-slide img {
+  width: 100%;
+  border-radius: 10px;
+}
+
+/* FILTERS */
+.gallery-page .filters {
+  margin: 20px 0;
+  text-align: center;
+}
+
+.gallery-page .filters button {
+  margin: 5px;
+  padding: 8px 15px;
+  border: none;
+  background: #2e7d32;
+  color: white;
+  border-radius: 20px;
+  cursor: pointer;
+}
+
+/* GRID */
+.gallery-page .gallery-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 15px;
+}
+
+/* IMAGE BOX */
+.gallery-page .img-box {
+  position: relative;
+  overflow: hidden;
+  border-radius: 10px;
+}
+
+.gallery-page .img-box img {
+  width: 100%;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.gallery-page .img-box:hover img {
+  transform: scale(1.05);
+}
+
+/* LABEL */
+.gallery-page .img-box span {
+  position: absolute;
+  bottom: 10px;
+  left: 10px;
+  background: rgba(0,0,0,0.6);
+  color: white;
+  padding: 5px 10px;
+  border-radius: 5px;
+}
+
+/* BUTTON */
+.gallery-page .view-more {
+  text-align: center;
+  margin-top: 20px;
+}
+
+.gallery-page .view-more a {
+  padding: 10px 20px;
+  background: #2e7d32;
+  color: white;
+  border-radius: 5px;
+  text-decoration: none;
+}
+
+/* VIEWER */
+.gallery-page #viewer {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.96);
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+}
+
+.gallery-page #viewer img {
+  max-width: 90%;
+  max-height: 85%;
+}
+
+/* CLOSE */
+.gallery-page #close {
+  position: fixed;
+  top: 20px;
+  right: 25px;
+  font-size: 35px;
+  color: white;
+  cursor: pointer;
+}
+
+/* ARROWS */
+.gallery-page .arrow {
+  position: fixed;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 40px;
+  color: white;
+  cursor: pointer;
+  background: rgba(0,0,0,0.5);
+  padding: 10px;
+  border-radius: 50%;
+}
+
+.gallery-page .arrow.left { left: 20px; }
+.gallery-page .arrow.right { right: 20px; }
+
+/* COUNTER */
+.gallery-page #counter {
+  position: fixed;
+  bottom: 20px;
+  color: white;
+  background: rgba(0,0,0,0.6);
+  padding: 5px 12px;
+  border-radius: 20px;
+}
+
+/* PLAY */
+.gallery-page #play {
+  position: fixed;
+  bottom: 60px;
+  padding: 10px;
+  border: none;
+  background: rgba(0,0,0,0.6);
+  color: white;
+  border-radius: 50%;
+}

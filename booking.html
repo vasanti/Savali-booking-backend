@@ -7,12 +7,9 @@
 
 <link rel="stylesheet" href="style.css">
 
-<!-- Flatpickr -->
+<!-- 📅 Flatpickr -->
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
 <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
-
-<!-- Razorpay -->
-<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 
 </head>
 
@@ -42,11 +39,11 @@
 <div class="container">
 
 <h1>🌿 Book Your Stay at Saavali</h1>
-<p class="subtitle">Your peaceful holiday retreat in the heart of nature</p>
+<p class="subtitle">Your peaceful holiday retreat in nature</p>
 
 <div class="form-box">
 
-<form>
+<form id="bookingForm">
 
 <label>Full Name</label>
 <input type="text" name="name" required>
@@ -58,30 +55,60 @@
 <input type="email" name="email" required>
 
 <label>Check-in</label>
-<input type="text" id="checkin" placeholder="Select Check-in" readonly required>
+<input type="text" id="checkin" name="checkin" readonly required>
 
 <label>Check-out</label>
-<input type="text" id="checkout" placeholder="Select Check-out" readonly required>
+<input type="text" id="checkout" name="checkout" readonly required>
 
-<p id="date-msg"></p>
+<p id="availability-msg"></p>
 
 <label>Guests (Max 6)</label>
 <input type="number" name="guests" min="1" max="6" required>
 
-<button type="button" onclick="startPayment()">💳 Pay & Book</button>
+<button type="submit" id="submitBtn">🌿 Submit Booking</button>
 
 </form>
 
 </div>
+
 </div>
 
+<!-- WhatsApp Floating -->
 <a href="https://wa.me/919890021266" class="whatsapp">💬</a>
-
 <footer class="footer">
-  <p>📞 9890021266</p>
+  <div class="footer-container">
+
+    <div class="footer-col">
+      <h3>Savali</h3>
+      <p>Nature. Culture. Adventure.</p>
+    </div>
+
+    <div class="footer-col">
+      <h4>Links</h4>
+      <a href="index.html">About</a>
+      <a href="booking.html">Booking</a>
+      <a href="gallery.html">Gallery</a>
+    </div>
+
+    <div class="footer-col">
+      <h4>Contact</h4>
+      <p>📍 Bhor</p>
+      <p>📞 +91 XXXXXXXX</p>
+    </div>
+
+  </div>
+
+  <p class="copyright">© SanVsan Solutions Pvt.Ltd.</p>
 </footer>
+</body>
+</html>
 
 <script>
+
+// ==============================
+// 🔗 CORRECT SCRIPT URL (IMPORTANT)
+// ==============================
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzVKeZ96bWZJetfFxIcR3sb5Z0ualK7I0p1zNxAEIDDl2a93bM6jxAAkqoi5gE80ciTwg/exec";
 
 // ==============================
 // 📅 GLOBAL
@@ -90,18 +117,17 @@ let bookedDates = [];
 
 const checkin = document.getElementById("checkin");
 const checkout = document.getElementById("checkout");
-const msg = document.getElementById("date-msg");
-const guestInput = document.querySelector('input[name="guests"]');
+const msg = document.getElementById("availability-msg");
+const guestInput = document.querySelector('[name="guests"]');
+const btn = document.getElementById("submitBtn");
 
 // ==============================
-// 📅 INIT CALENDAR FIRST (FIX)
+// 📅 INIT CALENDAR
 // ==============================
 const checkinPicker = flatpickr("#checkin", {
   minDate: "today",
   disable: bookedDates,
   dateFormat: "Y-m-d",
-  allowInput: false,
-  clickOpens: true,
   onChange: validateDates
 });
 
@@ -109,32 +135,22 @@ const checkoutPicker = flatpickr("#checkout", {
   minDate: "today",
   disable: bookedDates,
   dateFormat: "Y-m-d",
-  allowInput: false,
-  clickOpens: true,
   onChange: validateDates
 });
 
 // ==============================
-// 📅 FETCH GOOGLE CALENDAR
+// 📅 FETCH BOOKED DATES
 // ==============================
-fetch("https://script.google.com/macros/s/AKfycbxViis_EDwwFsXUm21CqV2FaUBNZCwGrFHj7qqKzBMZCUFv28D906SjxmwSiP4yptWd2Q/exec")
+fetch(SCRIPT_URL)
   .then(res => res.json())
   .then(data => {
-
-    console.log("Booked Dates:", data);
-
     bookedDates = data;
-
     checkinPicker.set("disable", bookedDates);
     checkoutPicker.set("disable", bookedDates);
-
-  })
-  .catch(err => {
-    console.error("Calendar fetch failed:", err);
   });
 
 // ==============================
-// 🔓 AUTO OPEN
+// 🔓 OPEN CALENDAR
 // ==============================
 checkin.addEventListener("focus", () => checkinPicker.open());
 checkout.addEventListener("focus", () => checkoutPicker.open());
@@ -152,98 +168,9 @@ function validateDates() {
     return false;
   }
 
-  let current = new Date(checkin.value);
-  let end = new Date(checkout.value);
-
-  while (current <= end) {
-    let dateStr = current.toISOString().split("T")[0];
-
-    if (bookedDates.includes(dateStr)) {
-      msg.style.color = "red";
-      msg.innerText = "❌ This date is already booked";
-      return false;
-    }
-
-    current.setDate(current.getDate() + 1);
-  }
-
   msg.style.color = "green";
   msg.innerText = "✅ Dates available";
   return true;
-}
-
-// ==============================
-// 💳 PAYMENT
-// ==============================
-async function startPayment() {
-
-  if (!validateDates()) {
-    alert("Please select valid dates");
-    return;
-  }
-
-  const bookingData = {
-    name: document.querySelector('[name="name"]').value,
-    phone: document.querySelector('[name="phone"]').value,
-    email: document.querySelector('[name="email"]').value,
-    checkin: checkin.value,
-    checkout: checkout.value
-  };
-
-  try {
-
-    const orderRes = await fetch("https://savali-booking-backend.onrender.com/api/create-order", {
-      method: "POST",
-      headers: {"Content-Type": "application/json"},
-      body: JSON.stringify({ amount: 100 })
-    });
-
-    const order = await orderRes.json();
-
-    const options = {
-  key: "rzp_test_SiVrSTD43hh3Jh",
-  amount: order.amount,
-  currency: "INR",
-  order_id: order.id,
-  name: "Saavali Stay",
-
-  method: {
-    upi: false,   // ❌ disable UPI (test issue)
-    wallet: false,
-    netbanking: false,
-    emi: false
-  },
-
-  theme: {
-    color: "#3399cc"
-  },
-
-  handler: async function (response) {
-    const verifyRes = await fetch("https://savali-booking-backend.onrender.com/api/verify-payment", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        ...response,
-        bookingData
-      })
-    });
-
-    const result = await verifyRes.json();
-
-    if (result.success) {
-      alert("🎉 Booking Confirmed!");
-      location.reload();
-    } else {
-      alert("Payment failed");
-    }
-  }
-};
-
-    new Razorpay(options).open();
-
-  } catch (err) {
-    alert("Payment error");
-  }
 }
 
 // ==============================
@@ -251,10 +178,59 @@ async function startPayment() {
 // ==============================
 guestInput.addEventListener("input", function() {
   if (this.value > 6) {
-    alert("⚠ Max 6 guests allowed.");
+    alert("⚠ Maximum 6 guests allowed.\nFor more, contact us on WhatsApp.");
     window.open("https://wa.me/919890021266", "_blank");
     this.value = 6;
   }
+});
+
+// ==============================
+// 📩 SUBMIT BOOKING (FIXED)
+// ==============================
+document.getElementById("bookingForm").addEventListener("submit", function(e) {
+
+  e.preventDefault();
+
+  if (!validateDates()) {
+    alert("❌ Please select valid available dates.");
+    return;
+  }
+
+  const formData = new FormData(this);
+
+  // UI feedback
+  btn.innerText = "⏳ Sending...";
+  btn.disabled = true;
+
+  fetch(SCRIPT_URL, {
+    method: "POST",
+    body: formData
+  })
+  .then(() => {
+
+    alert(
+      "🌿 Booking Request Sent!\n\n" +
+      "✅ We have received your request.\n" +
+      "📩 You will get confirmation email shortly.\n\n" +
+      "Thank you for choosing Savali 🌿"
+    );
+
+    document.getElementById("bookingForm").reset();
+    msg.innerText = "";
+
+    btn.innerText = "🌿 Submit Booking";
+    btn.disabled = false;
+
+  })
+  .catch(() => {
+
+    alert("❌ Something went wrong. Please try again.");
+
+    btn.innerText = "🌿 Submit Booking";
+    btn.disabled = false;
+
+  });
+
 });
 
 </script>

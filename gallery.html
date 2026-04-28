@@ -1,58 +1,93 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>Gallery</title>
+<title>Gallery - Savali</title>
+
 <link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="gallery.css">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper/swiper-bundle.min.css"/>
+<script src="https://cdn.jsdelivr.net/npm/swiper/swiper-bundle.min.js"></script>
+
 </head>
 
 <body>
 
-
+<!-- HEADER -->
 <header class="header">
   <div class="nav-container">
+    <div class="logo">
+      <img src="images/logo.png">
+      <div class="logo-text">
+        <span class="brand">Savali</span>
+        <small>The shades of shadow</small>
+      </div>
+    </div>
 
-    <!-- Logo -->
- <div class="logo">
-  <img src="images/logo.png">
-  <div class="logo-text">
-    <span class="brand">Savali</span>
-    <small>The shades of shadow</small>
-  </div>
-</div>
-
-    <!-- Menu -->
     <nav class="nav-links">
-     <a href="index.html">About</a>
+      <a href="index.html">About</a>
       <a href="booking.html">Booking</a>
       <a href="stay.html">Stay</a>
-  
     </nav>
-
   </div>
 </header>
 
-<div class="container">
+<!-- ✅ IMPORTANT FIX -->
+<div class="container gallery-page">
+
 <h1>📸 Gallery</h1>
-<h2>🎥 Property Tour</h2>
 
-<video controls class="gallery-video">
-  <source src="images/video.mp4" type="video/mp4">
-</video>
+<!-- SLIDER -->
+<div class="swiper mySwiper">
+  <div class="swiper-wrapper">
+    <div class="swiper-slide"><img src="images/gallery/1.png"></div>
+    <div class="swiper-slide"><img src="images/gallery/2.png"></div>
+    <div class="swiper-slide"><img src="images/gallery/3.png"></div>
+  </div>
+  <div class="swiper-pagination"></div>
+</div>
+
+<!-- GRID -->
 <div class="gallery-grid">
-  <img src="images/gallery/1.png" alt="Gallery Image 1">
-  <img src="images/gallery/2.png" alt="Gallery Image 2">
-  <img src="images/gallery/3.png" alt="Gallery Image 3">
-   <img src="images/gallery/4.png" alt="Gallery Image 4">
-    <img src="images/gallery/5.png" alt="Gallery Image 5">
-     <img src="images/gallery/6.png" alt="Gallery Image 6">
-      <img src="images/gallery/7.png" alt="Gallery Image 7">
-       <img src="images/gallery/8.png" alt="Gallery Image 8">
-        <img src="images/gallery/9.png" alt="Gallery Image 9">
-         <img src="images/gallery/10.png" alt="Gallery Image 10">
+  <div class="img-box">
+    <img src="images/gallery/1.png" class="zoom-img">
+    <span>Room View</span>
+  </div>
+
+  <div class="img-box">
+    <img src="images/gallery/2.png" class="zoom-img">
+    <span>Outdoor Area</span>
+  </div>
+
+  <div class="img-box">
+    <img src="images/gallery/3.png" class="zoom-img">
+    <span>Nature View</span>
+  </div>
+</div>
+
+<div class="view-more">
+  <a href="https://drive.google.com/drive/folders/1WySbUkqbYmiVszs15Eu1ghxtMoCAX_mE" target="_blank">
+    📸 View Full Gallery
+  </a>
+</div>
+
+<!-- ✅ MOVE VIEWER INSIDE -->
+<div id="viewer">
+  <span id="close">✕</span>
+  <div id="counter"></div>
+
+
+  <span class="arrow left">&#10094;</span>
+  <span class="arrow right">&#10095;</span>
+
+  <img id="viewer-img">
+</div>
 
 </div>
-</div>
 
+<!-- FLOATING -->
+<!-- WhatsApp Floating -->
+<a href="https://wa.me/919890021266" class="whatsapp">💬</a>
 <footer class="footer">
   <div class="footer-container">
 
@@ -71,13 +106,119 @@
     <div class="footer-col">
       <h4>Contact</h4>
       <p>📍 Bhor</p>
-      <p>📞 +91 9890021266</p>
+      <p>📞 +91 XXXXXXXX</p>
     </div>
 
   </div>
 
   <p class="copyright">© SanVsan Solutions Pvt.Ltd.</p>
 </footer>
+
+<script>
+
+// SWIPER
+new Swiper(".mySwiper", {
+  loop: true,
+  autoplay: { delay: 2500 },
+  effect: "fade",
+  pagination: { el: ".swiper-pagination", clickable: true }
+});
+
+// VIEWER LOGIC
+const images = document.querySelectorAll(".zoom-img");
+const viewer = document.getElementById("viewer");
+const viewerImg = document.getElementById("viewer-img");
+const counter = document.getElementById("counter");
+
+let index = 0;
+let zoomed = false;
+let slideshow;
+
+// OPEN
+images.forEach((img, i) => {
+  img.onclick = () => {
+    viewer.style.display = "flex";
+    index = i;
+    updateViewer();
+  };
+});
+
+// UPDATE
+function updateViewer() {
+  viewerImg.style.opacity = 0;
+
+  setTimeout(() => {
+    viewerImg.src = images[index].src;
+    counter.innerText = `${index + 1} / ${images.length}`;
+    viewerImg.style.opacity = 1;
+  }, 150);
+}
+
+// CLOSE
+document.getElementById("close").onclick = () => {
+  viewer.style.display = "none";
+  clearInterval(slideshow);
+};
+
+// CLICK OUTSIDE
+viewer.addEventListener("click", (e) => {
+  if (e.target === viewer) viewer.style.display = "none";
+});
+
+// ARROWS
+document.querySelector(".arrow.right").onclick = () => {
+  index = (index + 1) % images.length;
+  updateViewer();
+};
+
+document.querySelector(".arrow.left").onclick = () => {
+  index = (index - 1 + images.length) % images.length;
+  updateViewer();
+};
+
+// KEYBOARD
+document.addEventListener("keydown", (e) => {
+  if (viewer.style.display !== "flex") return;
+
+  if (e.key === "Escape") viewer.style.display = "none";
+
+  if (e.key === "ArrowRight") {
+    index = (index + 1) % images.length;
+    updateViewer();
+  }
+
+  if (e.key === "ArrowLeft") {
+    index = (index - 1 + images.length) % images.length;
+    updateViewer();
+  }
+});
+
+// SWIPE
+let startX = 0;
+
+viewer.addEventListener("touchstart", e => {
+  startX = e.touches[0].clientX;
+});
+
+viewer.addEventListener("touchend", e => {
+  let endX = e.changedTouches[0].clientX;
+
+  if (endX < startX - 50) index++;
+  else if (endX > startX + 50) index--;
+
+  index = (index + images.length) % images.length;
+  updateViewer();
+});
+
+// DOUBLE CLICK ZOOM
+viewerImg.ondblclick = () => {
+  zoomed = !zoomed;
+  viewerImg.style.transform = zoomed ? "scale(1.8)" : "scale(1)";
+};
+
+
+
+</script>
 
 </body>
 </html>
