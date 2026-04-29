@@ -49,16 +49,16 @@
 <input type="text" name="name" required>
 
 <label>Phone</label>
-<input type="tel" name="phone" required>
+<input type="tel" name="phone" required pattern="[0-9]{10}">
 
 <label>Email</label>
 <input type="email" name="email" required>
 
 <label>Check-in</label>
-<input type="text" id="checkin" name="checkin" readonly required>
+<input type="text" id="checkin" name="checkin" required>
 
 <label>Check-out</label>
-<input type="text" id="checkout" name="checkout" readonly required>
+<input type="text" id="checkout" name="checkout" required>
 
 <p id="availability-msg"></p>
 
@@ -75,6 +75,7 @@
 
 <!-- WhatsApp Floating -->
 <a href="https://wa.me/919890021266" class="whatsapp">💬</a>
+
 <footer class="footer">
   <div class="footer-container">
 
@@ -100,15 +101,13 @@
 
   <p class="copyright">© SanVsan Solutions Pvt.Ltd.</p>
 </footer>
-</body>
-</html>
 
 <script>
 
 // ==============================
-// 🔗 CORRECT SCRIPT URL (IMPORTANT)
+// 🔗 SCRIPT URL
 // ==============================
-const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzVKeZ96bWZJetfFxIcR3sb5Z0ualK7I0p1zNxAEIDDl2a93bM6jxAAkqoi5gE80ciTwg/exec";
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwCDfJ9rxnCWKOfvSRjXh-kdsuevP5b4AD51C23ROgI5wqxV1d9ojGhNcrJqUEY_ocKjQ/exec";
 
 // ==============================
 // 📅 GLOBAL
@@ -147,6 +146,9 @@ fetch(SCRIPT_URL)
     bookedDates = data;
     checkinPicker.set("disable", bookedDates);
     checkoutPicker.set("disable", bookedDates);
+  })
+  .catch(() => {
+    console.log("Could not load booked dates");
   });
 
 // ==============================
@@ -198,7 +200,6 @@ document.getElementById("bookingForm").addEventListener("submit", function(e) {
 
   const formData = new FormData(this);
 
-  // UI feedback
   btn.innerText = "⏳ Sending...";
   btn.disabled = true;
 
@@ -206,17 +207,23 @@ document.getElementById("bookingForm").addEventListener("submit", function(e) {
     method: "POST",
     body: formData
   })
-  .then(() => {
+  .then(res => res.json())
+  .then(data => {
 
-    alert(
-      "🌿 Booking Request Sent!\n\n" +
-      "✅ We have received your request.\n" +
-      "📩 You will get confirmation email shortly.\n\n" +
-      "Thank you for choosing Savali 🌿"
-    );
+    if (data.status === "success") {
 
-    document.getElementById("bookingForm").reset();
-    msg.innerText = "";
+      alert(
+        "🌿 Booking Request Sent!\n\n" +
+        "📩 You will receive confirmation email.\n\n" +
+        "Thank you for choosing Savali 🌿"
+      );
+
+      document.getElementById("bookingForm").reset();
+      msg.innerText = "";
+
+    } else {
+      alert("❌ " + (data.error || "Something failed"));
+    }
 
     btn.innerText = "🌿 Submit Booking";
     btn.disabled = false;
@@ -224,7 +231,7 @@ document.getElementById("bookingForm").addEventListener("submit", function(e) {
   })
   .catch(() => {
 
-    alert("❌ Something went wrong. Please try again.");
+    alert("❌ Network error. Please try again.");
 
     btn.innerText = "🌿 Submit Booking";
     btn.disabled = false;
