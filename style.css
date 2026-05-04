@@ -534,3 +534,48 @@ h1, h2 {
   color: white;
   border-radius: 50%;
 }
+.alert {
+  color: #ff0000;
+  font-weight: bold;
+  font-size: 18px;
+  animation: glow 1.5s ease-in-out infinite alternate;
+}
+
+@keyframes glow {
+  from {
+    text-shadow: 0 0 5px #ff4d4d, 0 0 10px #ff4d4d;
+  }
+  to {
+    text-shadow: 0 0 15px #ff0000, 0 0 25px #ff0000;
+  }
+}
+
+/* Scrolling banner */
+/* Banner */
+.scroll-banner {
+  background: linear-gradient(90deg, #1b5e20, #2e7d32);
+  color: #ffeb3b;
+  overflow: hidden;
+  border-radius: 8px;
+  margin: 15px 0;
+}
+
+/* Track (moving container) */
+.scroll-track {
+  display: flex;
+  width: max-content;
+  animation: scrollLoop 15s linear infinite;
+}
+
+/* Text */
+.scroll-text {
+  padding: 10px 40px;
+  white-space: nowrap;
+  font-weight: bold;
+}
+
+/* Animation */
+@keyframes scrollLoop {
+  0%   { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}

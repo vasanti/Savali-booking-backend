@@ -138,3 +138,145 @@
   color: white;
   border-radius: 50%;
 }
+/* ===== ENHANCEMENTS (DO NOT REMOVE OLD CODE) ===== */
+
+/* Section headings */
+.gallery-page h2 {
+  text-align: center;
+  margin: 30px 0 10px;
+  font-size: 22px;
+  color: #2e7d32;
+}
+
+/* Alert (glow effect) */
+.gallery-page .alert {
+  text-align: center;
+  color: #ff0000;
+  font-weight: bold;
+  margin: 15px 0;
+  animation: glow 1.5s ease-in-out infinite alternate;
+}
+
+@keyframes glow {
+  from { text-shadow: 0 0 5px #ff4d4d; }
+  to { text-shadow: 0 0 20px #ff0000; }
+}
+
+/* Improve grid spacing on mobile */
+@media (max-width: 600px) {
+  .gallery-page .gallery-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+  }
+}
+
+/* Smooth image hover */
+.gallery-page .img-box img {
+  transition: transform 0.4s ease, filter 0.3s ease;
+}
+
+.gallery-page .img-box:hover img {
+  transform: scale(1.07);
+  filter: brightness(1.05);
+}
+
+/* Slight shadow for images (premium look) */
+.gallery-page .img-box {
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+
+/* Improve label readability */
+.gallery-page .img-box span {
+  font-size: 13px;
+}
+
+/* View more button (better style) */
+.gallery-page .view-more a {
+  background: none;
+  color: #2e7d32;
+  padding: 0;
+  font-weight: 500;
+  text-decoration: none;
+  border-bottom: 1px solid transparent;
+  transition: 0.3s;
+}
+
+.gallery-page .view-more a:hover {
+  border-bottom: 1px solid #2e7d32;
+}
+
+/* CTA section */
+.gallery-page .gallery-cta {
+  text-align: center;
+  margin: 40px 0;
+}
+
+.gallery-page .gallery-cta p {
+  font-size: 18px;
+  margin-bottom: 10px;
+}
+
+/* Viewer smooth transition */
+.gallery-page #viewer img {
+  transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+/* Arrow hover effect */
+.gallery-page .arrow:hover {
+  background: rgba(0,0,0,0.8);
+}
+
+/* Close button hover */
+.gallery-page #close:hover {
+  color: #ff4d4d;
+}
+
+/* Counter style improvement */
+.gallery-page #counter {
+  font-size: 14px;
+}
+
+/* Optional: subtle zoom cursor hint */
+.gallery-page .img-box img {
+  cursor: zoom-in;
+}.gallery-page .inline-link {
+  font-size: 14px;
+  margin-left: 10px;
+  color: #2e7d32;
+  text-decoration: none;
+}
+
+.gallery-page .inline-link:hover {
+  text-decoration: underline;
+}/* Overlay container */
+.gallery-page .more-box {
+  position: relative;
+}
+
+/* Overlay layer */
+.gallery-page .overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0,0,0,0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  opacity: 0;
+  transition: 0.3s;
+}
+
+/* Show on hover */
+.gallery-page .more-box:hover .overlay {
+  opacity: 1;
+}
+
+/* Text */
+.gallery-page .overlay a {
+  color: white;
+  font-weight: bold;
+  text-decoration: none;
+  font-size: 16px;
+  background: rgba(0,0,0,0.6);
+  padding: 8px 14px;
+  border-radius: 20px;
+}

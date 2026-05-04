@@ -7,7 +7,29 @@
 
 <link rel="stylesheet" href="style.css">
 </head>
+<script>
+  // Set countdown time (example: 6 hours from now)
+  let countDownDate = new Date().getTime() + (6 * 60 * 60 * 1000);
 
+  let timer = setInterval(function() {
+
+    let now = new Date().getTime();
+    let distance = countDownDate - now;
+
+    let hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+    let minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+    let seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+    document.getElementById("timer").innerHTML =
+      hours + "h " + minutes + "m " + seconds + "s ";
+
+    if (distance < 0) {
+      clearInterval(timer);
+      document.getElementById("timer").innerHTML = "Expired";
+    }
+
+  }, 1000);
+</script>
 <body>
 
 <!-- HEADER -->
@@ -50,19 +72,28 @@
   <h3>🌿 Villa Pricing</h3>
 
   <p class="price">
-    💰 Weekdays: <b>₹5,000</b> / night<br>
-    💰 Weekends: <b>₹6,500</b> / night
+    💰 Weekdays: <b>₹6,000</b> / night<br>
+    💰 Weekends: <b>₹7,500</b> / night
   </p>
 
   <p>👨‍👩‍👧‍👦 1 to 6 Guests</p>
 
-  <p class="alert">
-    ⚠ Only 1 villa available – Book early!
-  </p>
+  <span class="badge">🔔 Limited Availability</span>
 
+  <p class="alert">
+    🔥 2 out of 5 villas already booked – Reserve yours now!
+  </p>
+<!---🔥 High demand – Most weekends get booked in advance-->
+<!--- ⚠ Only 1 villa available – Book early!-->
+<!--  📅 Weekends fill fast – Book early to avoid disappointment!-->
+  <!--✨ Experience magical fireflies from 5th – 20th June  
+📅 Peak viewing period – Limited villas available-->
   <p class="offer">
     ✨ Special discounts available for longer stays
   </p>
+
+
+
 </div>
 
 <!-- HIGHLIGHTS -->
@@ -86,7 +117,7 @@
   <div class="feature-card">🚣 Kayaking & 🚤 Boating (Chargeable)</div>
 
   <div class="feature-card">🔥 Bonfire Area</div>
-  <div class="feature-card">🎮 Gaming Zone</div>
+  <div class="feature-card">🎮 Gaming Zone (Chargeable)</div>
   <div class="feature-card">🛏️ Extra Bed (Chargeable)</div>
   <div class="feature-card">🏊 Swimming Pool (Chargeable)</div>
 
@@ -146,6 +177,7 @@
   <p>✔ Check-in: After 12 PM</p>
   <p>✔ Check-out: Before 11 AM</p>
   <p>✔ No loud music after 10 PM</p>
+  <p>✔ Respect nature — leave only footprints, take only memories</p>
 </div>
 
 </section>
@@ -193,12 +225,24 @@
     </div>
 
     <div class="footer-col">
-      <h4>Contact</h4>
-      <p>📍 Bhor</p>
-      <p>📞 +91 9890021266</p>
+        <h4>Contact</h4>
+
+  <p><strong>Names:</strong> Vasanti / Sanjay</p>
+
+  <p><strong>Phone:</strong> 
+    <a href="tel:+919890021266">+91 9890021266</a>
+  </p>
+
+  <p>
+  <strong>Location:</strong> 
+  <a href="https://www.google.com/maps?q=Saavali+The+Shades+of+Shadow+Bhor" target="_blank">
+    📍 Bhor
+  </a>
+</p>
     </div>
 
   </div>
+
 
   <p class="copyright">© SanVsan Solutions Pvt.Ltd.</p>
 </footer>
